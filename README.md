@@ -117,7 +117,7 @@ Task_Manager/
 |-------|-------------------|----------|---------------------|
 | Admin | admin@example.com | admin23  | Full system access  |
 | User  | user1@example.com  | user123  | Task management only |
-| User  | user2@example.com  | user2123  | Task management only |
+| User  | user2@example.com  | user21234  | Task management only |
 
 ---
 
@@ -196,3 +196,5 @@ For technical issues or questions:
 - Ensure all prerequisites are properly installed
 
 ---
+### ⚠️ Deployment Notice
+This application is hosted temporarily using [Ngrok](https://ngrok.com/). The live URL depends on the availability of the developer's local machine. If the demo link is offline, kindly clone the project from GitHub and follow the local setup guide provided above.
