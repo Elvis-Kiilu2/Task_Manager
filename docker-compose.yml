@@ -8,7 +8,7 @@ services:
     environment:
       - DB_HOST=db
       - DB_USER=root
-      - DB_PASSWORD=root     
+      - DB_PASSWORD=root
       - DB_NAME=task_manager
     depends_on:
       - db
@@ -16,5 +16,5 @@ services:
   db:
     image: mysql:5.7
     environment:
-      MYSQL_ROOT_PASSWORD: root   
+      MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: task_manager

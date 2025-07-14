@@ -3,29 +3,38 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require_once  __DIR__ .'/includes/auth.php';
-require_once  __DIR__ .'/includes/db.php';
+require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $task_id = intval($_POST['task_id']);
-    $new_status = $_POST['status'];
+    $new_status = trim($_POST['status']);
     $user_id = $_SESSION['user_id'];
 
-    // Validate allowed status values
     $allowed_statuses = ['Pending', 'In Progress', 'Completed'];
     if (!in_array($new_status, $allowed_statuses)) {
-        die("Invalid status value.");
+        die("⛔ Invalid status value.");
     }
 
-    // Ensure the task belongs to this user
-    $stmt = $conn->prepare("UPDATE tasks SET status = ? WHERE id = ? AND user_id = ?");
-    $stmt->bind_param("sii", $new_status, $task_id, $user_id);
+    // Confirm this task is owned by the current user
+    $stmt = $conn->prepare("SELECT id FROM tasks WHERE id = ? AND user_id = ?");
+    $stmt->bind_param("ii", $task_id, $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    if ($stmt->execute() && $stmt->affected_rows > 0) {
+    if ($result->num_rows === 0) {
+        die("❌ Unauthorized: You can only update your own tasks.");
+    }
+
+    // Proceed to update status
+    $update = $conn->prepare("UPDATE tasks SET status = ? WHERE id = ?");
+    $update->bind_param("si", $new_status, $task_id);
+
+    if ($update->execute()) {
         header("Location: dashboard.php");
         exit();
     } else {
-        die("Failed to update task status or unauthorized.");
+        die("⚠️ Failed to update task status.");
     }
 }
 ?>

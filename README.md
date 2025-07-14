@@ -26,7 +26,7 @@ A simple task management system built in **PHP**, **MySQL** — designed to allo
 
 ### 📬 Communication
 - **Email Notifications**: Automated email alerts for task assignments using PHP `mail()`
-- **Real-time Updates**: Dynamic status updates without page refreshes
+- **Real-time Updates**: Dynamic status updates without page refreshes (future enhancement)
 
 ---
 
@@ -56,7 +56,7 @@ Task_Manager/
     │   ├── css/
     │   │   └── style.css            # Application styling
     │   └── js/
-    │       └── main.js              # Client-side interactions
+    │       └── main.js              # Client-side interactions (optional)
     └── sql/
         └── dump.sql                 # Database schema and seed data
 ```
@@ -105,18 +105,19 @@ Task_Manager/
    - Configure email settings for notifications (optional)
 
 5. **Access Application**
-   - Navigate to: `http://localhost/task-manager/`
+   - Navigate to: `http://localhost/Task_Manager/login.php`
+   - Or use Ngrok for remote access: `https://67a3571a838e.ngrok-free.app/Task_Manager/login.php`
    - Use sample credentials below to test functionality
 
 ---
 
 ## 👥 Default Credentials
 
-| Role  | Email                 | Password    | Access Level        |
-|-------|-----------------------|-------------|---------------------|
-| Admin | admin@example.com     | admin23 | Full system access  |
-| User  | user@example.com      | user123 | Task management only |
-
+| Role  | Email             | Password | Access Level        |
+|-------|-------------------|----------|---------------------|
+| Admin | admin@example.com | admin23  | Full system access  |
+| User  | user1@example.com  | user123  | Task management only |
+| User  | user2@example.com  | user2123  | Task management only |
 
 ---
 
@@ -150,13 +151,12 @@ $password = 'your_password';
 
 ## 🛠 Technology Stack
 
-| Component | Technology | Version |
-|-----------|------------|---------|
-| **Backend** | PHP | 8.0+ |
-| **Database** | MySQL/MariaDB | 5.7+ |
-| **Web Server** | Apache | 2.4+ |
-| **Frontend** | HTML5, CSS3, JavaScript | ES6+ |
-| **Architecture** | MVC Pattern | Custom |
+| Component      | Technology         | Version |
+|----------------|---------------------|---------|
+| **Backend**    | PHP                 | 8.0+    |
+| **Database**   | MySQL               | 5.7+    |
+| **Web Server** | Apache              | 2.4+    |
+| **Frontend**   | HTML5, CSS3         | ES6+    |
 
 ---
 
@@ -177,7 +177,6 @@ $password = 'your_password';
 
 ---
 
-
 ## 🤝 Contributing
 
 This project was developed as part of the Cytonn Software Engineering Internship Challenge. For improvements or bug fixes:
@@ -197,4 +196,3 @@ For technical issues or questions:
 - Ensure all prerequisites are properly installed
 
 ---
-
