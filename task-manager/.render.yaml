@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: task-manager
+    env: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    autoDeploy: true

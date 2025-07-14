@@ -1,13 +1,11 @@
 <?php
-$host = "localhost";
-$username = "root";
-$password = ""; // XAMPP default has no password
-$database = "task_manager";
+$host = getenv('DB_HOST') ?: 'localhost';
+$username = getenv('DB_USER') ?: 'root';
+$password = getenv('DB_PASSWORD') ?: '';
+$database = getenv('DB_NAME') ?: 'task_manager';
 
-// Create connection
 $conn = new mysqli($host, $username, $password, $database);
 
-// Check connection
 if ($conn->connect_error) {
     die("Database connection failed: " . $conn->connect_error);
 }

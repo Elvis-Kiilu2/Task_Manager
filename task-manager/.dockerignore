@@ -1,0 +1,5 @@
+*.git
+*.md
+sql/
+node_modules/
+vendor/

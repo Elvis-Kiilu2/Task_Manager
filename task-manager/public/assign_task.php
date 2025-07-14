@@ -1,6 +1,10 @@
 <?php
-require_once 'includes/auth.php';
-require_once 'includes/db.php';
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+require_once __DIR__ .'/../includes/auth.php';
+require_once __DIR__ . '/../includes/db.php';
 
 if (!$_SESSION['is_admin']) {
     header("Location: dashboard.php");
@@ -10,7 +14,7 @@ if (!$_SESSION['is_admin']) {
 $msg = '';
 $error = '';
 
-// Fetch all users
+// Fetch all non-admin users
 $users = $conn->query("SELECT id, name, email FROM users WHERE is_admin = 0");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -24,23 +28,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bind_param("isss", $user_id, $title, $description, $deadline);
 
         if ($stmt->execute()) {
-            // Send email
-            $emailQuery = $conn->prepare("SELECT email FROM users WHERE id = ?");
+            // Fetch assigned user's email and name
+            $emailQuery = $conn->prepare("SELECT name, email FROM users WHERE id = ?");
             $emailQuery->bind_param("i", $user_id);
             $emailQuery->execute();
-            $emailQuery->bind_result($recipient_email);
+            $emailQuery->bind_result($recipient_name, $recipient_email);
             $emailQuery->fetch();
             $emailQuery->close();
 
+            // Compose and send email
             $subject = "New Task Assigned";
-            $message = "You have been assigned a new task: $title\n\nDeadline: $deadline";
+            $message = "Hello $recipient_name,\n\n"
+                     . "You have been assigned a new task:\n"
+                     . "Title: $title\n"
+                     . "Description: $description\n"
+                     . "Deadline: $deadline\n\n"
+                     . "Please log in to your dashboard to view and update the task.\n\n"
+                     . "Regards,\nTask Manager System";
             $headers = "From: taskmanager@localhost";
 
             mail($recipient_email, $subject, $message, $headers);
 
-            $msg = "Task assigned and email sent.";
+            $msg = "✅ Task assigned and email sent to $recipient_email.";
         } else {
-            $error = "Failed to assign task.";
+            $error = "❌ Failed to assign task. Please try again.";
         }
         $stmt->close();
     } else {
@@ -75,7 +86,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <select name="user_id" required>
             <option value="">Select User</option>
             <?php while($u = $users->fetch_assoc()): ?>
-                <option value="<?= $u['id'] ?>"><?= htmlspecialchars($u['name']) ?> (<?= $u['email'] ?>)</option>
+                <option value="<?= $u['id'] ?>">
+                    <?= htmlspecialchars($u['name']) ?> (<?= htmlspecialchars($u['email']) ?>)
+                </option>
             <?php endwhile; ?>
         </select><br><br>
 

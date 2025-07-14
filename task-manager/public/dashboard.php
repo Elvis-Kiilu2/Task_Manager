@@ -2,8 +2,9 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-require_once 'includes/auth.php';
-require_once 'includes/db.php';
+
+require_once  __DIR__ .'/../includes/auth.php';
+require_once  __DIR__ .'/../includes/db.php';
 
 $user_id = $_SESSION['user_id'];
 $name = $_SESSION['name'];
@@ -11,12 +12,18 @@ $is_admin = $_SESSION['is_admin'];
 
 // Fetch tasks
 if ($is_admin) {
-    $query = "SELECT t.*, u.name AS assigned_to FROM tasks t JOIN users u ON t.user_id = u.id ORDER BY deadline ASC";
+    $query = "SELECT t.*, u.name AS assigned_to 
+              FROM tasks t 
+              JOIN users u ON t.user_id = u.id 
+              ORDER BY deadline ASC";
+    $tasks = $conn->query($query);
 } else {
-    $query = "SELECT * FROM tasks WHERE user_id = $user_id ORDER BY deadline ASC";
+    $query = "SELECT * FROM tasks WHERE user_id = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $tasks = $stmt->get_result();
 }
-
-$tasks = $conn->query($query);
 ?>
 
 <!DOCTYPE html>
@@ -34,6 +41,7 @@ $tasks = $conn->query($query);
         <ul>
             <li><a href="users/add_user.php">Add User</a></li>
             <li><a href="assign_task.php">Assign Task</a></li>
+            <li><a href="users/manage_users.php">Manage Users</a></li>
         </ul>
     <?php endif; ?>
 
