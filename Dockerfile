@@ -10,8 +10,13 @@ RUN apt-get update && apt-get install -y \
 # Enable Apache rewrite module
 RUN a2enmod rewrite
 
+# Set Apache to use index.php as the default DirectoryIndex
+RUN echo "DirectoryIndex index.php" >> /etc/apache2/apache2.conf
+
 # Copy project files
-COPY ./task-manager /var/www/html/
+COPY ./task-manager/public/ /var/www/html/
+COPY ./task-manager/includes/ /var/www/html/includes/
+COPY ./task-manager/sql/ /var/www/html/sql/
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html/ \
