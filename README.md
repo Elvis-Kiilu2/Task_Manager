@@ -117,7 +117,6 @@ Task_Manager/
 | Admin | admin@example.com     | admin23 | Full system access  |
 | User  | user@example.com      | user123 | Task management only |
 
-> **Note**: Change these credentials immediately after setup for security.
 
 ---
 
