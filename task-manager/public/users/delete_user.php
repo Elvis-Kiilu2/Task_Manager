@@ -28,28 +28,3 @@ if ($stmt->execute()) {
     die("Failed to delete user.");
 }
 ?>
-<?php
-require_once '../includes/auth.php';
-require_once '../includes/db.php';
-
-if (!$_SESSION['is_admin']) {
-    header("Location: ../dashboard.php");
-    exit();
-}
-
-$user_id = intval($_GET['id']);
-
-// Prevent deleting own account
-if ($user_id == $_SESSION['user_id']) {
-    die("You cannot delete your own account.");
-}
-
-$stmt = $conn->prepare("DELETE FROM users WHERE id = ?");
-$stmt->bind_param("i", $user_id);
-if ($stmt->execute()) {
-    header("Location: ../dashboard.php");
-    exit();
-} else {
-    die("Failed to delete user.");
-}
-?>

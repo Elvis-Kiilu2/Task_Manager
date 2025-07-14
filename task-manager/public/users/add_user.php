@@ -3,9 +3,8 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require_once  __DIR__ .'/../../includes/auth.php';
-require_once  __DIR__ .'/../../includes/db.php';
-
+require_once __DIR__ . '/../../includes/auth.php';
+require_once __DIR__ . '/../../includes/db.php';
 
 if (!$_SESSION['is_admin']) {
     header("Location: ../dashboard.php");
@@ -26,38 +25,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bind_param("sss", $name, $email, $hashed);
 
         if ($stmt->execute()) {
-            $msg = "User added successfully.";
+            $msg = "✅ User added successfully.";
         } else {
-            $error = "Failed to add user. Email might already exist.";
+            $error = "❌ Failed to add user. Email might already exist.";
         }
     } else {
-        $error = "All fields are required.";
+        $error = "⚠️ All fields are required.";
     }
 }
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Add User</title>
+    <meta charset="UTF-8">
+    <title>Add User - Cytonn Task Manager</title>
+    <link rel="stylesheet" href="../css/users.css">
+
+
 </head>
 <body>
-    <h2>Add New User</h2>
-    <p><a href="../dashboard.php">← Back to Dashboard</a></p>
+    <div class="dashboard-container">
+        <h2 style="text-align: center;">Add New User</h2>
+        <p><a href="../dashboard.php">← Back to Dashboard</a></p>
 
-    <?php if ($msg): ?><p style="color:green"><?= $msg ?></p><?php endif; ?>
-    <?php if ($error): ?><p style="color:red"><?= $error ?></p><?php endif; ?>
+        <?php if ($msg): ?><p class="success"><?= htmlspecialchars($msg) ?></p><?php endif; ?>
+        <?php if ($error): ?><p class="error"><?= htmlspecialchars($error) ?></p><?php endif; ?>
 
-    <form method="POST" action="add_user.php">
-        <label>Name:</label><br>
-        <input type="text" name="name" required><br><br>
+        <form method="POST" action="add_user.php">
+            <label for="name">Name:</label>
+            <input type="text" name="name" id="name" required>
 
-        <label>Email:</label><br>
-        <input type="email" name="email" required><br><br>
+            <label for="email">Email:</label>
+            <input type="email" name="email" id="email" required>
 
-        <label>Password:</label><br>
-        <input type="password" name="password" required><br><br>
+            <label for="password">Password:</label>
+            <input type="password" name="password" id="password" required>
 
-        <button type="submit">Add User</button>
-    </form>
+            <button type="submit">➕ Add User</button>
+        </form>
+    </div>
 </body>
 </html>

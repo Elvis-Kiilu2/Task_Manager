@@ -52,7 +52,7 @@ Task_Manager/
     │   ├── add_user.php             # Admin: Add new users
     │   ├── edit_user.php            # Admin: Edit existing users
     │   └── delete_user.php          # Admin: Remove users
-    ├── assets/
+    ├── public/
     │   ├── css/
     │   │   └── style.css            # Application styling
     │   └── js/

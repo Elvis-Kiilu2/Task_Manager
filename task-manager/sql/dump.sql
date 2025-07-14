@@ -13,8 +13,9 @@ CREATE TABLE IF NOT EXISTS tasks (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     title VARCHAR(255) NOT NULL,
+    start_date DATE NOT NULL,
     description TEXT,
-    deadline DATE,
+    deadline DATE NOT NULL,
     status VARCHAR(50) DEFAULT 'Pending',
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );

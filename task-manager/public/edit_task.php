@@ -36,25 +36,30 @@ $stmt->close();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = trim($_POST['title']);
     $description = trim($_POST['description']);
+    $start_date = $_POST['start_date'];
     $deadline = $_POST['deadline'];
     $status = $_POST['status'];
 
-    if ($title && $deadline && $status) {
-        $stmt = $conn->prepare("UPDATE tasks SET title = ?, description = ?, deadline = ?, status = ? WHERE id = ?");
-        $stmt->bind_param("ssssi", $title, $description, $deadline, $status, $task_id);
-        if ($stmt->execute()) {
-            $msg = "Task updated successfully.";
+    if ($title && $start_date && $deadline && $status) {
+        if (strtotime($start_date) > strtotime($deadline)) {
+            $error = "Start date cannot be after the deadline.";
         } else {
-            $error = "Update failed.";
-        }
-        $stmt->close();
+            $stmt = $conn->prepare("UPDATE tasks SET title = ?, description = ?, start_date = ?, deadline = ?, status = ? WHERE id = ?");
+            $stmt->bind_param("sssssi", $title, $description, $start_date, $deadline, $status, $task_id);
+            if ($stmt->execute()) {
+                $msg = "Task updated successfully.";
+            } else {
+                $error = "Update failed.";
+            }
+            $stmt->close();
 
-        // Refresh task data
-        $stmt = $conn->prepare("SELECT * FROM tasks WHERE id = ?");
-        $stmt->bind_param("i", $task_id);
-        $stmt->execute();
-        $task = $stmt->get_result()->fetch_assoc();
-        $stmt->close();
+            // Refresh task data
+            $stmt = $conn->prepare("SELECT * FROM tasks WHERE id = ?");
+            $stmt->bind_param("i", $task_id);
+            $stmt->execute();
+            $task = $stmt->get_result()->fetch_assoc();
+            $stmt->close();
+        }
     } else {
         $error = "All fields except description are required.";
     }
@@ -62,37 +67,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Edit Task</title>
+    <meta charset="UTF-8">
+    <title>Edit Task - Cytonn Task Manager</title>
+    <link rel="stylesheet" href="css/tasks.css">
 </head>
-<body>
-    <h2>Edit Task</h2>
-    <p><a href="dashboard.php">← Back to Dashboard</a></p>
+<body class="dashboard-page">
+    <div class="dashboard-container">
+        <header class="main-header">
+            <div class="header-left">
+                <h1>Edit Task</h1>
+            </div>
+            <div class="header-right">
+                <nav>
+                    <a href="dashboard.php">← Back to Dashboard</a>
+                    <a href="logout.php" class="logout-link">Logout</a>
+                </nav>
+            </div>
+        </header>
 
-    <?php if ($msg): ?><p style="color:green"><?= htmlspecialchars($msg) ?></p><?php endif; ?>
-    <?php if ($error): ?><p style="color:red"><?= htmlspecialchars($error) ?></p><?php endif; ?>
+        <main class="main-content">
+            <?php if ($msg): ?><p class="success"><?= htmlspecialchars($msg) ?></p><?php endif; ?>
+            <?php if ($error): ?><p class="error"><?= htmlspecialchars($error) ?></p><?php endif; ?>
 
-    <?php if ($task): ?>
-    <form method="POST">
-        <label>Title:</label><br>
-        <input type="text" name="title" value="<?= htmlspecialchars($task['title']) ?>" required><br><br>
+            <?php if ($task): ?>
+            <form method="POST" class="form-box">
+                <label>Title</label>
+                <input type="text" name="title" value="<?= htmlspecialchars($task['title']) ?>" required>
 
-        <label>Description:</label><br>
-        <textarea name="description" rows="4"><?= htmlspecialchars($task['description']) ?></textarea><br><br>
+                <label>Description</label>
+                <textarea name="description" rows="4"><?= htmlspecialchars($task['description']) ?></textarea>
 
-        <label>Deadline:</label><br>
-        <input type="date" name="deadline" value="<?= htmlspecialchars($task['deadline']) ?>" required><br><br>
+                <label>Start Date</label>
+                <input type="date" name="start_date" value="<?= htmlspecialchars($task['start_date']) ?>" required>
 
-        <label>Status:</label><br>
-        <select name="status" required>
-            <option <?= $task['status'] === 'Pending' ? 'selected' : '' ?>>Pending</option>
-            <option <?= $task['status'] === 'In Progress' ? 'selected' : '' ?>>In Progress</option>
-            <option <?= $task['status'] === 'Completed' ? 'selected' : '' ?>>Completed</option>
-        </select><br><br>
+                <label>Deadline</label>
+                <input type="date" name="deadline" value="<?= htmlspecialchars($task['deadline']) ?>" required>
 
-        <button type="submit">Update Task</button>
-    </form>
-    <?php endif; ?>
+                <label>Status</label>
+                <select name="status" required>
+                    <option <?= $task['status'] === 'Pending' ? 'selected' : '' ?>>Pending</option>
+                    <option <?= $task['status'] === 'In Progress' ? 'selected' : '' ?>>In Progress</option>
+                    <option <?= $task['status'] === 'Completed' ? 'selected' : '' ?>>Completed</option>
+                </select>
+
+                <button type="submit">💾 Update Task</button>
+            </form>
+            <?php endif; ?>
+        </main>
+    </div>
 </body>
 </html>

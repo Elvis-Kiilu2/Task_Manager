@@ -1,12 +1,10 @@
 <?php
-
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 session_start();
-require_once  __DIR__ . '/../includes/db.php';
-
+require_once __DIR__ . '/../includes/db.php';
 
 $error = '';
 
@@ -43,88 +41,58 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Login - Task Manager</title>
-    <style>
-        body {
-            font-family: Arial;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding-top: 50px;
-            background: #f8f8f8;
-        }
-        .container {
-            display: flex;
-            gap: 50px;
-        }
-        .login-box {
-            background: white;
-            border: 1px solid #ddd;
-            padding: 20px;
-            width: 300px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.05);
-        }
-        h2 {
-            margin-top: 0;
-        }
-        .error {
-            color: red;
-            font-size: 14px;
-        }
-        input[type=email],
-        input[type=password] {
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-        }
-        button {
-            width: 100%;
-            padding: 10px;
-            background: #1976d2;
-            color: white;
-            border: none;
-            margin-top: 15px;
-            cursor: pointer;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <title>Login - Cytonn Task Manager</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
-<div class="container">
-    <div class="login-box">
-        <h2>User Login</h2>
-        <form method="POST" action="login.php">
-            <input type="hidden" name="role" value="user">
-            <?php if ($error && ($_POST['role'] ?? '') === 'user'): ?>
-                <p class="error"><?= $error ?></p>
-            <?php endif; ?>
-            <label>Email:</label>
-            <input type="email" name="email" required>
+<body class="auth-page" backgroundima="url">
+    <div class="auth-container">
+        <h1 style="text-align: center;">Cytonn Task Manager</h1>
+        <p class="subtext">
+            Manage and assign tasks efficiently across your team. Choose the appropriate login panel below.
+        </p>
 
-            <label>Password:</label>
-            <input type="password" name="password" required>
+        <?php if ($error): ?>
+            <p class="error"><?= htmlspecialchars($error) ?></p>
+        <?php endif; ?>
 
-            <button type="submit">Login as User</button>
-        </form>
+        <div class="login-panels">
+            <!-- Admin Login -->
+            <div class="login-box">
+                <h3>Admin Login</h3>
+                <form method="POST" action="login.php">
+                    <input type="hidden" name="role" value="admin">
+                    <label>Email</label>
+                    <input type="email" name="email" required>
+
+                    <label>Password</label>
+                    <input type="password" name="password" required>
+
+                    <button type="submit">Login as Admin</button>
+                </form>
+            </div>
+
+            <!-- User Login -->
+            <div class="login-box">
+                <h3>User Login</h3>
+                <form method="POST" action="login.php">
+                    <input type="hidden" name="role" value="user">
+                    <label>Email</label>
+                    <input type="email" name="email" required>
+
+                    <label>Password</label>
+                    <input type="password" name="password" required>
+
+                    <button type="submit">Login as User</button>
+                </form>
+            </div>
+        </div>
+
+        <footer class="footer-note">
+            <p>Need help? Contact your system administrator.</p>
+        </footer>
     </div>
-
-    <div class="login-box">
-        <h2>Admin Login</h2>
-        <form method="POST" action="login.php">
-            <input type="hidden" name="role" value="admin">
-            <?php if ($error && ($_POST['role'] ?? '') === 'admin'): ?>
-                <p class="error"><?= $error ?></p>
-            <?php endif; ?>
-            <label>Email:</label>
-            <input type="email" name="email" required>
-
-            <label>Password:</label>
-            <input type="password" name="password" required>
-
-            <button type="submit">Login as Admin</button>
-        </form>
-    </div>
-</div>
 </body>
 </html>
