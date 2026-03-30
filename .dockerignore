@@ -4,7 +4,6 @@
 .gitignore
 .idea
 .vscode
-frontend
 legacy
 *.md
 docker-compose.yml
