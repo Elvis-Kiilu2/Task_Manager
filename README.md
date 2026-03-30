@@ -9,10 +9,9 @@ A full-stack Task Management application with a Vue.js frontend and Laravel REST
 ```
 Task_Manager/
 ├── README.md                  ← This file
-├── BRD.md                     ← Business Requirements Document
 ├── .gitignore
 │
-├── backend/                   ← Laravel 11 REST API (PHP 8.2+ / MySQL 8.x)
+├── backend/                   ← Laravel 13.2.0 REST API (PHP 8.4.1 / MySQL 8.0)
 │   ├── app/
 │   │   ├── Enums/             ← Priority, Status (PHP 8.1 backed enums)
 │   │   ├── Http/
@@ -24,12 +23,8 @@ Task_Manager/
 │   │   ├── migrations/        ← tasks table schema
 │   │   └── seeders/           ← Sample data
 │   ├── routes/api.php         ← API routes (/api/v1/*)
-│   ├── docker-compose.yml     ← app + mysql containers
-│   ├── Dockerfile
-│   ├── pint.json              ← Laravel Pint (PSR-12)
 │   └── ...
-│
-├── frontend/                  ← Vue 3 + Vite SPA
+├── frontend/                  ← Vue 3.5.30 + Vite 8.0.3 SPA
 │   ├── src/
 │   │   ├── services/api.js    ← Axios API client
 │   │   ├── router/index.js    ← Vue Router
@@ -84,22 +79,47 @@ docker compose exec app php artisan migrate
 docker compose exec app php artisan db:seed
 ```
 
-## API Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/v1/health` | Health check |
-| GET | `/api/v1/tasks` | List tasks (paginated, filterable by status) |
-| POST | `/api/v1/tasks` | Create task |
-| PATCH | `/api/v1/tasks/{id}/status` | Update task status (forward-only) |
-| DELETE | `/api/v1/tasks/{id}` | Delete task (done only) |
 | GET | `/api/v1/tasks/report?date=YYYY-MM-DD` | Daily report |
+
+### Example API Requests
+
+#### 1. Create Task
+`POST /api/v1/tasks`
+```json
+{
+  "title": "Complete Laravel Assignment",
+  "due_date": "2026-04-01",
+  "priority": "high"
+}
+```
+
+#### 2. Update Status
+`PATCH /api/v1/tasks/{id}/status`
+```json
+{
+  "status": "in_progress"
+}
+```
+
+#### 3. Daily Report
+`GET /api/v1/tasks/report?date=2026-04-01`
+Response:
+```json
+{
+  "date": "2026-04-01",
+  "summary": {
+    "high": {"pending": 0, "in_progress": 1, "done": 0},
+    "medium": {"pending": 1, "in_progress": 0, "done": 0},
+    "low": {"pending": 0, "in_progress": 0, "done": 0}
+  }
+}
+```
 
 ## Frontend Features
 
 - Task list with status filter (All / Pending / In Progress / Done)
 - Create new tasks with title, due date, priority
-- Inline status update via dropdown (only allowed transitions shown)
+- Inline status update via dropdown 
 - Delete done tasks
 - Daily report with priority × status breakdown
 - Pagination support
@@ -109,14 +129,12 @@ docker compose exec app php artisan db:seed
 
 | Component | Technology |
 |-----------|------------|
-| Frontend | Vue 3 + Vite + Vue Router + Axios |
-| Backend | PHP 8.2+ / Laravel 11 |
-| Database | MySQL 8.x |
+| Frontend | Vue 3.5.30 + Vite 8.0.3 + Vue Router + Axios 1.14 |
+| Backend | PHP 8.4.1 / Laravel 13.2.0 |
+| Database | MySQL 8.0 |
 | ORM | Eloquent |
 | Linting | Laravel Pint (PSR-12) |
 | Testing | PHPUnit |
 | Deployment | Docker + Render/Railway |
 
-## Documentation
 
-- [BRD.md](BRD.md) — Full business requirements, API specs, architecture decisions
