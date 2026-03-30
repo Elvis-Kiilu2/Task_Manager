@@ -1,11 +1,12 @@
-node_modules
-dist
 .env
 .env.*
-*.log
 .git
 .gitignore
 .idea
 .vscode
+frontend
+legacy
 *.md
 docker-compose.yml
+render.yaml
+*.log

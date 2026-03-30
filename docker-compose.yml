@@ -4,10 +4,10 @@ services:
     container_name: task-manager-db
     restart: always
     environment:
-      MYSQL_DATABASE: task_manager
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
     ports:
-      - "3307:3306"
+      - "${DB_PORT:-3307}:3306"
     volumes:
       - dbdata:/var/lib/mysql
     healthcheck:
@@ -23,16 +23,11 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    env_file:
+      - .env
     environment:
-      APP_ENV: production
-      APP_DEBUG: false
-      APP_KEY: base64:dGhpcyBpcyBhIHRlc3Qga2V5IGZvciBkZXY=
-      DB_CONNECTION: mysql
       DB_HOST: db
       DB_PORT: 3306
-      DB_DATABASE: task_manager
-      DB_USERNAME: root
-      DB_PASSWORD: root
     expose:
       - "8000"
 
@@ -43,7 +38,7 @@ services:
     depends_on:
       - backend
     ports:
-      - "8080:80"
+      - "${FRONTEND_PORT:-8080}:80"
 
 volumes:
   dbdata:

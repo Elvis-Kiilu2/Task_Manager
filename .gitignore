@@ -2,27 +2,31 @@
 vendor/
 node_modules/
 
-# Environment
-.env
-.env.local
+# Environment — never commit secrets
+**/.env
+**/.env.*
+!**/.env.example
 
 # IDE
 .idea/
 .vscode/
-*.swp
-*.swo
 
 # OS
 .DS_Store
 Thumbs.db
 
 # Laravel
-backend/storage/*.key
-backend/bootstrap/cache/
+storage/*.key
+storage/logs/
+bootstrap/cache/
 
 # Build artifacts
 dist/
-build/
 
-# Composer
+# Docker
+docker-compose.override.yml
+
+# Misc
 composer.phar
+*.log
+legacy/
