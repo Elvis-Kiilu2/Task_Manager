@@ -1,198 +1,122 @@
-# Task Manager – Cytonn Software Engineering Internship Challenge
+# Task Manager — Monorepo
 
-A simple task management system built in **PHP**, **MySQL** — designed to allow administrators to manage users and tasks while enabling users to update their assigned task statuses.
-
----
-
-## ✨ Features
-
-### 👨‍💼 Admin Capabilities
-- **User Management**: Add, edit, and delete users with role assignments
-- **Task Assignment**: Create and assign tasks with deadlines to specific users
-- **Task Overview**: View all tasks across the system with filtering options
-- **Email Notifications**: Automatically send email notifications when tasks are assigned
-- **Dashboard Analytics**: Monitor task completion rates and user activity
-
-### 👤 User Capabilities
-- **Task Dashboard**: View all assigned tasks with clear status indicators
-- **Status Updates**: Update task status between `Pending`, `In Progress`, and `Completed`
-- **Task Details**: Access comprehensive task information including deadlines and descriptions
-- **Personal Analytics**: Track personal task completion statistics
-
-### 🔐 Security Features
-- **Role-Based Authentication**: Separate login interfaces for Admin and User roles
-- **Session Management**: Secure session-based access control
-- **Access Control**: Role-restricted dashboard and feature access
-
-### 📬 Communication
-- **Email Notifications**: Automated email alerts for task assignments using PHP `mail()`
-- **Real-time Updates**: Dynamic status updates without page refreshes (future enhancement)
+A full-stack Task Management application with a Vue.js frontend and Laravel REST API backend.
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 Task_Manager/
-├── README.md
-└── task-manager/
-    ├── index.php                    # Landing page and login interface
-    ├── login.php                    # Authentication logic
-    ├── logout.php                   # Session termination
-    ├── dashboard.php                # Main dashboard (role-specific)
-    ├── assign_task.php              # Admin: Task assignment interface
-    ├── update_status.php            # User: Task status updates
-    ├── edit_task.php                # Task editing functionality
-    ├── includes/
-    │   ├── auth.php                 # Authentication middleware
-    │   ├── db.php                   # Database connection handler
-    │   └── functions.php            # Utility functions and helpers
-    ├── users/
-    │   ├── manage_users.php         # Admin: User management dashboard
-    │   ├── add_user.php             # Admin: Add new users
-    │   ├── edit_user.php            # Admin: Edit existing users
-    │   └── delete_user.php          # Admin: Remove users
-    ├── public/
-    │   ├── css/
-    │   │   └── style.css            # Application styling
-    │   └── js/
-    │       └── main.js              # Client-side interactions (optional)
-    └── sql/
-        └── dump.sql                 # Database schema and seed data
+├── README.md                  ← This file
+├── BRD.md                     ← Business Requirements Document
+├── .gitignore
+│
+├── backend/                   ← Laravel 11 REST API (PHP 8.2+ / MySQL 8.x)
+│   ├── app/
+│   │   ├── Enums/             ← Priority, Status (PHP 8.1 backed enums)
+│   │   ├── Http/
+│   │   │   ├── Controllers/   ← TaskController (5 endpoints)
+│   │   │   ├── Requests/      ← StoreTaskRequest, UpdateStatusRequest
+│   │   │   └── Resources/     ← TaskResource
+│   │   └── Models/            ← Task (Eloquent)
+│   ├── database/
+│   │   ├── migrations/        ← tasks table schema
+│   │   └── seeders/           ← Sample data
+│   ├── routes/api.php         ← API routes (/api/v1/*)
+│   ├── docker-compose.yml     ← app + mysql containers
+│   ├── Dockerfile
+│   ├── pint.json              ← Laravel Pint (PSR-12)
+│   └── ...
+│
+├── frontend/                  ← Vue 3 + Vite SPA
+│   ├── src/
+│   │   ├── services/api.js    ← Axios API client
+│   │   ├── router/index.js    ← Vue Router
+│   │   ├── views/
+│   │   │   ├── TaskList.vue   ← Task list with filters & pagination
+│   │   │   ├── TaskForm.vue   ← Create task form
+│   │   │   └── DailyReport.vue ← Priority/status report
+│   │   ├── App.vue            ← Root component with nav
+│   │   ├── main.js            ← Entry point
+│   │   └── style.css          ← Global styles
+│   └── ...
+│
+└── legacy/                    ← Original PHP app (preserved for reference)
 ```
 
----
+## Quick Start
 
-## 🚀 Installation & Setup
+### 1. Start Backend
 
-### Prerequisites
-- **XAMPP/LAMP Stack** (Apache, MySQL, PHP 8.0+)
-- **Web Browser** (Chrome, Firefox, Safari, Edge)
-- **Database Access** (phpMyAdmin or MySQL CLI)
+```bash
+# Start MySQL (Docker)
+docker run -d --name task-manager-db \
+  -e MYSQL_ROOT_PASSWORD=root \
+  -e MYSQL_DATABASE=task_manager \
+  -p 3306:3306 mysql:8.0
 
-### Step-by-Step Setup
-
-1. **Install XAMPP/LAMP**
-   ```bash
-   # For Ubuntu/Debian
-   sudo apt install lamp-server^
-   
-   # Or download XAMPP from https://www.apachefriends.org/
-   ```
-
-2. **Deploy Application**
-   ```bash
-   # Place the task-manager folder in your web root
-   cp -r task-manager/ /opt/lampp/htdocs/
-   # or for XAMPP on Windows: C:\xampp\htdocs\
-   ```
-
-3. **Database Setup**
-   ```bash
-   # Access MySQL
-   mysql -u root -p
-   
-   # Create database
-   CREATE DATABASE task_manager;
-   USE task_manager;
-   
-   # Import schema
-   SOURCE /full/path/to/sql/dump.sql;
-   ```
-
-4. **Configuration**
-   - Update database credentials in `includes/db.php`
-   - Configure email settings for notifications (optional)
-
-5. **Access Application**
-   - Navigate to: `http://localhost/Task_Manager/login.php`
-   - Or use Ngrok for remote access: `https://67a3571a838e.ngrok-free.app/Task_Manager/login.php`
-   - Use sample credentials below to test functionality
-
----
-
-## 👥 Default Credentials
-
-| Role  | Email             | Password | Access Level        |
-|-------|-------------------|----------|---------------------|
-| Admin | admin@example.com | admin23  | Full system access  |
-| User  | user1@example.com  | user123  | Task management only |
-| User  | user2@example.com  | user2123  | Task management only |
-
----
-
-## 🔧 Configuration
-
-### Email Setup
-To enable email notifications:
-
-1. **Basic PHP Mail** (Default)
-   ```php
-   // Ensure PHP mail() is configured on your server
-   // Check php.ini for SMTP settings
-   ```
-
-2. **Enhanced Email (Recommended)**
-   ```php
-   // Consider implementing PHPMailer with Gmail SMTP
-   // For production-grade email delivery
-   ```
-
-### Database Configuration
-Update `includes/db.php` with your database settings:
-```php
-$host = 'localhost';
-$dbname = 'task_manager';
-$username = 'your_username';
-$password = 'your_password';
+# Start Laravel API
+cd backend
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate
+php artisan db:seed
+php artisan serve --port=8000
 ```
 
----
+### 2. Start Frontend
 
-## 🛠 Technology Stack
+```bash
+cd frontend
+npm install
+npm run dev
+# App at http://localhost:5173
+```
 
-| Component      | Technology         | Version |
-|----------------|---------------------|---------|
-| **Backend**    | PHP                 | 8.0+    |
-| **Database**   | MySQL               | 5.7+    |
-| **Web Server** | Apache              | 2.4+    |
-| **Frontend**   | HTML5, CSS3         | ES6+    |
+### Or: Docker (Full Stack)
 
----
+```bash
+cd backend
+docker compose up -d --build
+docker compose exec app php artisan migrate
+docker compose exec app php artisan db:seed
+```
 
-## 📱 Usage Guide
+## API Endpoints
 
-### For Administrators
-1. **Login** with admin credentials
-2. **Manage Users**: Add, edit, or remove users from the system
-3. **Assign Tasks**: Create tasks with deadlines and assign to users
-4. **Monitor Progress**: Track task completion across all users
-5. **View Reports**: Access system-wide analytics and reports
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/health` | Health check |
+| GET | `/api/v1/tasks` | List tasks (paginated, filterable by status) |
+| POST | `/api/v1/tasks` | Create task |
+| PATCH | `/api/v1/tasks/{id}/status` | Update task status (forward-only) |
+| DELETE | `/api/v1/tasks/{id}` | Delete task (done only) |
+| GET | `/api/v1/tasks/report?date=YYYY-MM-DD` | Daily report |
 
-### For Users
-1. **Login** with user credentials
-2. **View Tasks**: See all assigned tasks on the dashboard
-3. **Update Status**: Change task status as work progresses
-4. **Track Progress**: Monitor personal task completion rates
+## Frontend Features
 
----
+- Task list with status filter (All / Pending / In Progress / Done)
+- Create new tasks with title, due date, priority
+- Inline status update via dropdown (only allowed transitions shown)
+- Delete done tasks
+- Daily report with priority × status breakdown
+- Pagination support
+- Responsive design
 
-## 🤝 Contributing
+## Tech Stack
 
-This project was developed as part of the Cytonn Software Engineering Internship Challenge. For improvements or bug fixes:
+| Component | Technology |
+|-----------|------------|
+| Frontend | Vue 3 + Vite + Vue Router + Axios |
+| Backend | PHP 8.2+ / Laravel 11 |
+| Database | MySQL 8.x |
+| ORM | Eloquent |
+| Linting | Laravel Pint (PSR-12) |
+| Testing | PHPUnit |
+| Deployment | Docker + Render/Railway |
 
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Submit a pull request
+## Documentation
 
----
-
-## 🆘 Support
-
-For technical issues or questions:
-- Check the troubleshooting section in the documentation
-- Review the code comments for implementation details
-- Ensure all prerequisites are properly installed
-
----
+- [BRD.md](BRD.md) — Full business requirements, API specs, architecture decisions

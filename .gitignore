@@ -1,2 +1,28 @@
+# Dependencies
 vendor/
+node_modules/
+
+# Environment
 .env
+.env.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Laravel
+backend/storage/*.key
+backend/bootstrap/cache/
+
+# Build artifacts
+dist/
+build/
+
+# Composer
+composer.phar
