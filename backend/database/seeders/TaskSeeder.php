@@ -21,7 +21,10 @@ class TaskSeeder extends Seeder
         ];
 
         foreach ($tasks as $task) {
-            Task::create($task);
+            Task::firstOrCreate(
+                ['title' => $task['title'], 'due_date' => $task['due_date']],
+                $task
+            );
         }
     }
 }
