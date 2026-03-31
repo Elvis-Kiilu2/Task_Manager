@@ -184,9 +184,14 @@ async function updateStatus(id, status) {
   error.value = ''
   success.value = ''
   try {
-    await api.updateStatus(id, status)
+    const res = await api.updateStatus(id, status)
     success.value = `Task status updated to ${formatStatus(status)}`
-    fetchTasks(meta.value.current_page)
+    
+    // Update local state instead of refetching everything
+    const index = tasks.value.findIndex(t => t.id === id)
+    if (index !== -1) {
+      tasks.value[index] = res.data.data
+    }
   } catch (e) {
     error.value = e.response?.data?.message || e.response?.data?.error || 'Failed to update status'
   }
@@ -199,7 +204,14 @@ async function deleteTask(id) {
   try {
     await api.deleteTask(id)
     success.value = 'Task deleted successfully'
-    fetchTasks(meta.value.current_page)
+    
+    // Remove from local state immediately
+    tasks.value = tasks.value.filter(t => t.id !== id)
+    
+    // If we're now on an empty page and it's not the first page, go back
+    if (tasks.value.length === 0 && meta.value.current_page > 1) {
+      fetchTasks(meta.value.current_page - 1)
+    }
   } catch (e) {
     error.value = e.response?.data?.message || 'Failed to delete task'
   }
