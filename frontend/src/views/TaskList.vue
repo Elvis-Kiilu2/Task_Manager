@@ -2,7 +2,6 @@
   <div>
     <div class="page-header">
       <h2>Tasks</h2>
-      <router-link to="/tasks/new" class="btn btn-primary">+ New Task</router-link>
     </div>
 
     <div v-if="error" class="alert alert-error">{{ error }}</div>
@@ -78,35 +77,49 @@
               <td>{{ task.due_date }}</td>
               <td>
                 <div class="actions">
-                  <select
-                    v-if="task.allowed_next_status.length > 0"
-                    class="form-control"
-                    style="width: auto; padding: 4px 8px; font-size: 12px"
-                    @change="updateStatus(task.id, $event.target.value)"
-                  >
-                    <option value="" disabled selected>Move to...</option>
-                    <option
+                  <div v-if="task.allowed_next_status.length > 0" class="actions">
+                    <button
                       v-for="s in task.allowed_next_status"
                       :key="s"
-                      :value="s"
+                      class="btn-icon"
+                      :class="{ 'btn-success-icon': s === 'done', 'btn-info-icon': s === 'in_progress' }"
+                      :title="'Mark as ' + formatStatus(s)"
+                      @click="updateStatus(task.id, s)"
                     >
-                      {{ formatStatus(s) }}
-                    </option>
-                  </select>
-                  <span v-else style="font-size: 12px; color: var(--gray-400)">Terminal</span>
-                  <router-link
-                    :to="'/tasks/' + task.id + '/edit'"
-                    class="btn btn-outline btn-sm"
-                  >
-                    Edit
-                  </router-link>
-                  <button
-                    v-if="task.status === 'done'"
-                    class="btn btn-danger btn-sm"
-                    @click="deleteTask(task.id)"
-                  >
-                    Delete
-                  </button>
+                      <!-- Play Icon for In Progress -->
+                      <svg v-if="s === 'in_progress'" style="width:16px;height:16px" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M8,5.14V19.14L19,12.14L8,5.14Z" />
+                      </svg>
+                      <!-- Check Icon for Done -->
+                      <svg v-else-if="s === 'done'" style="width:16px;height:16px" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" />
+                      </svg>
+                    </button>
+                  </div>
+                  <span v-else style="font-size: 11px; color: var(--gray-400); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em">Finished</span>
+                  
+                  <div class="actions">
+                    <router-link
+                      :to="'/tasks/' + task.id + '/edit'"
+                      class="btn-icon"
+                      title="Edit Task"
+                    >
+                      <svg style="width:16px;height:16px" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.88,8.88M3,17.25V21H6.75L17.81,9.93L14.07,6.19L3,17.25Z" />
+                      </svg>
+                    </router-link>
+                    
+                    <button
+                      v-if="task.status === 'done'"
+                      class="btn-icon btn-danger-icon"
+                      title="Delete Task"
+                      @click="deleteTask(task.id)"
+                    >
+                      <svg style="width:18px;height:18px" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M7,6H17V19H7V6M9,8V17H11V8H9M13,8V17H15V8H13Z" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
               </td>
             </tr>
