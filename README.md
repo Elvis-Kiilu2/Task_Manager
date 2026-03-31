@@ -1,6 +1,6 @@
 # Task Manager — Monorepo
 
-A full-stack Task Management application with a Vue.js frontend and Laravel REST API backend.
+A Task Management application with a **Vue js** frontend and **Laravel** REST API backend.
 
 ---
 
@@ -8,102 +8,71 @@ A full-stack Task Management application with a Vue.js frontend and Laravel REST
 
 ```
 Task_Manager/
-├── README.md                  ← This file
-├── .gitignore
-│
-├── backend/                   ← Laravel 13.2.0 REST API (PHP 8.4.1 / MySQL 8.0)
-│   ├── app/
-│   │   ├── Enums/             ← Priority, Status (PHP 8.1 backed enums)
-│   │   ├── Http/
-│   │   │   ├── Controllers/   ← TaskController (5 endpoints)
-│   │   │   ├── Requests/      ← StoreTaskRequest, UpdateStatusRequest
-│   │   │   └── Resources/     ← TaskResource
-│   │   └── Models/            ← Task (Eloquent)
-│   ├── database/
-│   │   ├── migrations/        ← tasks table schema
-│   │   └── seeders/           ← Sample data
-│   ├── routes/api.php         ← API routes (/api/v1/*)
-│   └── ...
-├── frontend/                  ← Vue 3.5.30 + Vite 8.0.3 SPA
-│   ├── src/
-│   │   ├── services/api.js    ← Axios API client
-│   │   ├── router/index.js    ← Vue Router
-│   │   ├── views/
-│   │   │   ├── TaskList.vue   ← Task list with filters & pagination
-│   │   │   ├── TaskForm.vue   ← Create task form
-│   │   │   └── DailyReport.vue ← Priority/status report
-│   │   ├── App.vue            ← Root component with nav
-│   │   ├── main.js            ← Entry point
-│   │   └── style.css          ← Global styles
-│   └── ...
-│
-└── legacy/                    ← Original PHP app (preserved for reference)
+├── backend/                   ← Laravel 13.2.0 REST API (PHP 8.4.1)
+├── frontend/                  ← Vue 3.5.30 + Vite 8.0.1 SPA
+├── database_dump.sql          ← MySQL SQL dump file
+├── Dockerfile                 ← Production Build (Single-container)
+├── docker-compose.yml         ← Local Dev (Multi-container)
+└── README.md                  ← This file
 ```
 
-## Quick Start
+---
 
-### 1. Start Backend
+## Quick Start (Local)
 
+### 1. Using Docker Compose
 ```bash
-# Start MySQL (Docker)
-docker run -d --name task-manager-db \
-  -e MYSQL_ROOT_PASSWORD=root \
-  -e MYSQL_DATABASE=task_manager \
-  -p 3306:3306 mysql:8.0
-
-# Start Laravel API
-cd backend
-composer install
-cp .env.example .env
-php artisan key:generate
-php artisan migrate
-php artisan db:seed
-php artisan serve --port=8000
-```
-
-### 2. Start Frontend
-
-```bash
-cd frontend
-npm install
-npm run dev
-# App at http://localhost:5173
-```
-
-### Or: Docker (Full Stack)
-
-```bash
-cd backend
+# Start the full stack
 docker compose up -d --build
-docker compose exec app php artisan migrate
-docker compose exec app php artisan db:seed
+
+# Run initial setup
+docker compose exec backend php artisan migrate --seed
+
+# Access: http://localhost:8080 (Frontend) | http://localhost:8000 (API)
 ```
 
-| GET | `/api/v1/tasks/report?date=YYYY-MM-DD` | Daily report |
+---
 
-### Example API Requests
+## How to Deploy (Render)
 
-#### 1. Create Task
+This project is optimized for **Single-Container** deployment using the root `Dockerfile`.
+
+1. **Connect Repository**: Link your GitHub repo to Render.
+2. **Setup Environment**: Add required `.env` variables (APP_KEY, etc.).
+3. **Build Command**: The system will automatically use the root `Dockerfile`.
+
+---
+
+## Health & Verification (Docker)
+
+To verify the system is running correctly:
+```bash
+# Check container status
+docker compose ps
+
+# Test API health from host
+curl -I http://localhost:8000/api/v1/tasks
+
+# View real-time logs
+docker compose logs -f backend
+```
+
+---
+
+## API Examples
+
+### 1. Create Task
 `POST /api/v1/tasks`
 ```json
 {
-  "title": "Complete Laravel Assignment",
+  "title": "Assignment Review",
   "due_date": "2026-04-01",
   "priority": "high"
 }
 ```
 
-#### 2. Update Status
-`PATCH /api/v1/tasks/{id}/status`
-```json
-{
-  "status": "in_progress"
-}
-```
-
-#### 3. Daily Report
+### 2. Daily Report
 `GET /api/v1/tasks/report?date=2026-04-01`
-Response:
 ```json
 {
   "date": "2026-04-01",
@@ -115,26 +84,10 @@ Response:
 }
 ```
 
-## Frontend Features
-
-- Task list with status filter (All / Pending / In Progress / Done)
-- Create new tasks with title, due date, priority
-- Inline status update via dropdown 
-- Delete done tasks
-- Daily report with priority × status breakdown
-- Pagination support
-- Responsive design
+---
 
 ## Tech Stack
-
-| Component | Technology |
-|-----------|------------|
-| Frontend | Vue 3.5.30 + Vite 8.0.3 + Vue Router + Axios 1.14 |
-| Backend | PHP 8.4.1 / Laravel 13.2.0 |
-| Database | MySQL 8.0 |
-| ORM | Eloquent |
-| Linting | Laravel Pint (PSR-12) |
-| Testing | PHPUnit |
-| Deployment | Docker + Render/Railway |
-
-
+- **Frontend**: Vue 3.5.30, Vite 8.0.1, Axios.
+- **Backend**: Laravel 13.2.0, PHP 8.4.1, Eloquent ORM.
+- **Infra**: Docker Compose, MySQL 8.0.
+- **Standards**: PSR-12 (Laravel Pint).
