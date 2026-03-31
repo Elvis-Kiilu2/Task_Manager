@@ -1,22 +1,20 @@
-FROM node:20-alpine AS frontend-build
-
+FROM node:20-slim AS frontend-build
 WORKDIR /app
 COPY frontend/package.json frontend/package-lock.json ./
 RUN npm ci
 COPY frontend/ .
 RUN npm run build
 
-FROM php:8.4-cli-alpine
+FROM php:8.4-cli
 
 WORKDIR /var/www
 
-# Install MariaDB (MySQL alternative) and other dependencies
-RUN apk add --no-cache unzip git curl libzip-dev mariadb mariadb-client \
-    && docker-php-ext-install pdo pdo_mysql zip
-
-# Prepare MariaDB directories
-RUN mkdir -p /run/mysqld /var/lib/mysql && \
-    chown -R mysql:mysql /run/mysqld /var/lib/mysql
+# Install Official MySQL (default-mysql-server) and PHP extensions
+RUN apt-get update && apt-get install -y \
+    default-mysql-server \
+    unzip git curl libzip-dev \
+    && docker-php-ext-install pdo pdo_mysql zip \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
@@ -28,7 +26,7 @@ RUN composer run-script post-autoload-dump --no-interaction
 
 COPY --from=frontend-build /app/dist /var/www/public
 
-# Permissions
+# Setup permissions for Laravel
 RUN chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
