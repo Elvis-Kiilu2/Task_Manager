@@ -12,5 +12,5 @@ Route::get('/{path?}', function () {
         ], 404);
     }
 
-    return file_get_contents($indexPath);
+    return response()->file($indexPath);
 })->where('path', '.*');

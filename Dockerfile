@@ -10,8 +10,13 @@ FROM php:8.4-cli-alpine
 
 WORKDIR /var/www
 
-RUN apk add --no-cache unzip git curl libzip-dev \
+# Install MariaDB (MySQL alternative) and other dependencies
+RUN apk add --no-cache unzip git curl libzip-dev mariadb mariadb-client \
     && docker-php-ext-install pdo pdo_mysql zip
+
+# Prepare MariaDB directories
+RUN mkdir -p /run/mysqld /var/lib/mysql && \
+    chown -R mysql:mysql /run/mysqld /var/lib/mysql
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
@@ -23,9 +28,15 @@ RUN composer run-script post-autoload-dump --no-interaction
 
 COPY --from=frontend-build /app/dist /var/www/public
 
+# Permissions
 RUN chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
+# Copy the startup script from the root context
+COPY start.sh /usr/local/bin/start.sh
+RUN chmod +x /usr/local/bin/start.sh
+
 EXPOSE 10000
 
-CMD php artisan migrate --force && php artisan db:seed --force && php artisan serve --host=0.0.0.0 --port=$PORT
+# Run the startup script
+CMD ["/usr/local/bin/start.sh"]
